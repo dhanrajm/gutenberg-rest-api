@@ -1,0 +1,33 @@
+import express from "express";
+import config from "./config";
+import routes from "./api/routes";
+import DB from "./db";
+import { errorFormatter, errorHandler, notFoundHandler } from "./helpers/error";
+const app = express();
+// Body parsing Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+try {
+    // init db
+    await new DB().init();
+    const baseUrl = `/api/v${config.api.version}`;
+    // mount all routes on /api path
+    app.use(`${baseUrl}`, routes);
+    // format errors
+    app.use(errorFormatter);
+    // catch 404
+    app.use(notFoundHandler);
+    // log error in winston transports except when executing test suite
+    // if (config.env !== "test") {
+    //   app.use(expressWinston.errorLogger({ winstonInstance }));
+    // }
+    // error handler
+    app.use(errorHandler);
+    app.listen(config.server.port, () => {
+        console.log(`[server]: Server is running at http://localhost:${config.server.port}`);
+    });
+}
+catch (error) {
+    console.log(`Error occurred: ${error}`);
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi9zcmMvaW5kZXgudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsT0FBTyxPQUF3QixNQUFNLFNBQVMsQ0FBQztBQUMvQyxPQUFPLE1BQU0sTUFBTSxVQUFVLENBQUM7QUFDOUIsT0FBTyxNQUFNLE1BQU0sY0FBYyxDQUFDO0FBQ2xDLE9BQU8sRUFBRSxNQUFNLE1BQU0sQ0FBQztBQUN0QixPQUFPLEVBQUUsY0FBYyxFQUFFLFlBQVksRUFBRSxlQUFlLEVBQUUsTUFBTSxpQkFBaUIsQ0FBQztBQUVoRixNQUFNLEdBQUcsR0FBZ0IsT0FBTyxFQUFFLENBQUM7QUFFbkMsMEJBQTBCO0FBQzFCLEdBQUcsQ0FBQyxHQUFHLENBQUMsT0FBTyxDQUFDLElBQUksRUFBRSxDQUFDLENBQUM7QUFDeEIsR0FBRyxDQUFDLEdBQUcsQ0FBQyxPQUFPLENBQUMsVUFBVSxDQUFDLEVBQUUsUUFBUSxFQUFFLElBQUksRUFBRSxDQUFDLENBQUMsQ0FBQztBQUVoRCxJQUFJO0lBQ0YsVUFBVTtJQUNWLE1BQU0sSUFBSSxFQUFFLEVBQUUsQ0FBQyxJQUFJLEVBQUUsQ0FBQztJQUV0QixNQUFNLE9BQU8sR0FBRyxTQUFTLE1BQU0sQ0FBQyxHQUFHLENBQUMsT0FBTyxFQUFFLENBQUM7SUFDOUMsZ0NBQWdDO0lBQ2hDLEdBQUcsQ0FBQyxHQUFHLENBQUMsR0FBRyxPQUFPLEVBQUUsRUFBRSxNQUFNLENBQUMsQ0FBQztJQUU5QixnQkFBZ0I7SUFDaEIsR0FBRyxDQUFDLEdBQUcsQ0FBQyxjQUFjLENBQUMsQ0FBQztJQUV4QixZQUFZO0lBQ1osR0FBRyxDQUFDLEdBQUcsQ0FBQyxlQUFlLENBQUMsQ0FBQztJQUV6QixtRUFBbUU7SUFDbkUsK0JBQStCO0lBQy9CLDhEQUE4RDtJQUM5RCxJQUFJO0lBRUosZ0JBQWdCO0lBQ2hCLEdBQUcsQ0FBQyxHQUFHLENBQUMsWUFBWSxDQUFDLENBQUM7SUFFdEIsR0FBRyxDQUFDLE1BQU0sQ0FBQyxNQUFNLENBQUMsTUFBTSxDQUFDLElBQUksRUFBRSxHQUFHLEVBQUU7UUFDbEMsT0FBTyxDQUFDLEdBQUcsQ0FDVCxtREFBbUQsTUFBTSxDQUFDLE1BQU0sQ0FBQyxJQUFJLEVBQUUsQ0FDeEUsQ0FBQztJQUNKLENBQUMsQ0FBQyxDQUFDO0NBQ0o7QUFBQyxPQUFPLEtBQUssRUFBRTtJQUNkLE9BQU8sQ0FBQyxHQUFHLENBQUMsbUJBQW1CLEtBQUssRUFBRSxDQUFDLENBQUM7Q0FDekMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgZXhwcmVzcywgeyBBcHBsaWNhdGlvbiB9IGZyb20gXCJleHByZXNzXCI7XHJcbmltcG9ydCBjb25maWcgZnJvbSBcIi4vY29uZmlnXCI7XHJcbmltcG9ydCByb3V0ZXMgZnJvbSBcIi4vYXBpL3JvdXRlc1wiO1xyXG5pbXBvcnQgREIgZnJvbSBcIi4vZGJcIjtcclxuaW1wb3J0IHsgZXJyb3JGb3JtYXR0ZXIsIGVycm9ySGFuZGxlciwgbm90Rm91bmRIYW5kbGVyIH0gZnJvbSBcIi4vaGVscGVycy9lcnJvclwiO1xyXG5cclxuY29uc3QgYXBwOiBBcHBsaWNhdGlvbiA9IGV4cHJlc3MoKTtcclxuXHJcbi8vIEJvZHkgcGFyc2luZyBNaWRkbGV3YXJlXHJcbmFwcC51c2UoZXhwcmVzcy5qc29uKCkpO1xyXG5hcHAudXNlKGV4cHJlc3MudXJsZW5jb2RlZCh7IGV4dGVuZGVkOiB0cnVlIH0pKTtcclxuXHJcbnRyeSB7XHJcbiAgLy8gaW5pdCBkYlxyXG4gIGF3YWl0IG5ldyBEQigpLmluaXQoKTtcclxuXHJcbiAgY29uc3QgYmFzZVVybCA9IGAvYXBpL3Yke2NvbmZpZy5hcGkudmVyc2lvbn1gO1xyXG4gIC8vIG1vdW50IGFsbCByb3V0ZXMgb24gL2FwaSBwYXRoXHJcbiAgYXBwLnVzZShgJHtiYXNlVXJsfWAsIHJvdXRlcyk7XHJcblxyXG4gIC8vIGZvcm1hdCBlcnJvcnNcclxuICBhcHAudXNlKGVycm9yRm9ybWF0dGVyKTtcclxuXHJcbiAgLy8gY2F0Y2ggNDA0XHJcbiAgYXBwLnVzZShub3RGb3VuZEhhbmRsZXIpO1xyXG5cclxuICAvLyBsb2cgZXJyb3IgaW4gd2luc3RvbiB0cmFuc3BvcnRzIGV4Y2VwdCB3aGVuIGV4ZWN1dGluZyB0ZXN0IHN1aXRlXHJcbiAgLy8gaWYgKGNvbmZpZy5lbnYgIT09IFwidGVzdFwiKSB7XHJcbiAgLy8gICBhcHAudXNlKGV4cHJlc3NXaW5zdG9uLmVycm9yTG9nZ2VyKHsgd2luc3Rvbkluc3RhbmNlIH0pKTtcclxuICAvLyB9XHJcblxyXG4gIC8vIGVycm9yIGhhbmRsZXJcclxuICBhcHAudXNlKGVycm9ySGFuZGxlcik7XHJcblxyXG4gIGFwcC5saXN0ZW4oY29uZmlnLnNlcnZlci5wb3J0LCAoKSA9PiB7XHJcbiAgICBjb25zb2xlLmxvZyhcclxuICAgICAgYFtzZXJ2ZXJdOiBTZXJ2ZXIgaXMgcnVubmluZyBhdCBodHRwOi8vbG9jYWxob3N0OiR7Y29uZmlnLnNlcnZlci5wb3J0fWBcclxuICAgICk7XHJcbiAgfSk7XHJcbn0gY2F0Y2ggKGVycm9yKSB7XHJcbiAgY29uc29sZS5sb2coYEVycm9yIG9jY3VycmVkOiAke2Vycm9yfWApO1xyXG59XHJcbiJdfQ==

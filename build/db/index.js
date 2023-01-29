@@ -1,0 +1,20 @@
+import KnexModule from "knex";
+import { Model } from "objection";
+import config from "../config";
+/**
+ * Database class for connection to postgres instance
+ */
+export default class DB {
+    static knex = null;
+    async init() {
+        DB.knex = KnexModule({
+            client: "postgres",
+            useNullAsDefault: true,
+            connection: config.db.connectionUri,
+        });
+        // Give the knex instance to objection.
+        Model.knex(DB.knex);
+    }
+}
+export { DB, Model };
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi9zcmMvZGIvaW5kZXgudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsT0FBTyxVQUFvQixNQUFNLE1BQU0sQ0FBQztBQUN4QyxPQUFPLEVBQUUsS0FBSyxFQUFFLE1BQU0sV0FBVyxDQUFDO0FBQ2xDLE9BQU8sTUFBTSxNQUFNLFdBQVcsQ0FBQztBQUUvQjs7R0FFRztBQUNILE1BQU0sQ0FBQyxPQUFPLE9BQU8sRUFBRTtJQUNyQixNQUFNLENBQUMsSUFBSSxHQUFnQyxJQUFJLENBQUM7SUFDaEQsS0FBSyxDQUFDLElBQUk7UUFDUixFQUFFLENBQUMsSUFBSSxHQUFHLFVBQVUsQ0FBQztZQUNuQixNQUFNLEVBQUUsVUFBVTtZQUNsQixnQkFBZ0IsRUFBRSxJQUFJO1lBQ3RCLFVBQVUsRUFBRSxNQUFNLENBQUMsRUFBRSxDQUFDLGFBQWE7U0FDcEMsQ0FBQyxDQUFDO1FBQ0gsdUNBQXVDO1FBQ3ZDLEtBQUssQ0FBQyxJQUFJLENBQUMsRUFBRSxDQUFDLElBQUksQ0FBQyxDQUFDO0lBQ3RCLENBQUM7O0FBR0gsT0FBTyxFQUFFLEVBQUUsRUFBRSxLQUFLLEVBQUUsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBLbmV4TW9kdWxlLCB7IEtuZXggfSBmcm9tIFwia25leFwiO1xyXG5pbXBvcnQgeyBNb2RlbCB9IGZyb20gXCJvYmplY3Rpb25cIjtcclxuaW1wb3J0IGNvbmZpZyBmcm9tIFwiLi4vY29uZmlnXCI7XHJcblxyXG4vKipcclxuICogRGF0YWJhc2UgY2xhc3MgZm9yIGNvbm5lY3Rpb24gdG8gcG9zdGdyZXMgaW5zdGFuY2VcclxuICovXHJcbmV4cG9ydCBkZWZhdWx0IGNsYXNzIERCIHtcclxuICBzdGF0aWMga25leDogS25leDxhbnksIHVua25vd25bXT4gfCBudWxsID0gbnVsbDtcclxuICBhc3luYyBpbml0KCk6IFByb21pc2U8dm9pZD4ge1xyXG4gICAgREIua25leCA9IEtuZXhNb2R1bGUoe1xyXG4gICAgICBjbGllbnQ6IFwicG9zdGdyZXNcIixcclxuICAgICAgdXNlTnVsbEFzRGVmYXVsdDogdHJ1ZSxcclxuICAgICAgY29ubmVjdGlvbjogY29uZmlnLmRiLmNvbm5lY3Rpb25VcmksXHJcbiAgICB9KTtcclxuICAgIC8vIEdpdmUgdGhlIGtuZXggaW5zdGFuY2UgdG8gb2JqZWN0aW9uLlxyXG4gICAgTW9kZWwua25leChEQi5rbmV4KTtcclxuICB9XHJcbn1cclxuXHJcbmV4cG9ydCB7IERCLCBNb2RlbCB9O1xyXG4iXX0=
