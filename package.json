@@ -47,6 +47,6 @@
     "knex": "knex"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": "v18.13.0"
   }
 }
