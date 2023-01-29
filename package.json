@@ -45,5 +45,8 @@
     "test": "jest",
     "test:ci": "jest --coverage --ci --maxWorkers=2 --reporters=default --reporters=jest-junit",
     "knex": "knex"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
