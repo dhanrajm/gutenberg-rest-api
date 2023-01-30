@@ -1,25 +1,30 @@
 import { Schema } from "express-validator/src/middlewares/schema";
+import logger from "./logger";
+
+const log = logger("helpers:schema");
 
 const bookListQuerySanitizer = (
   path: string,
   value: string | null | undefined,
   toInt: boolean
 ) => {
-  console.log(`bookListQuerySanitizer: ${path} ${value} ${toInt}`);
+  const logFn = log.extend("bookListQuerySanitizer");
+  logFn("called %O", `${path} ${value} ${toInt}`);
+
   if (!value) return null;
   let values = String(value)
     .split(",")
     .map((s) => (toInt ? parseInt(s.trim()) : s.trim()));
   if (values.length === 0) return null;
   if (values.length === 1) return values[0];
-  console.log(`bookListQuerySanitizer: ${JSON.stringify(values)}`);
+
+  logFn(`done %O`, JSON.stringify(values));
   return values;
 };
 const bookListQuery: Schema = {
   skip: {
     in: ["query"],
     notEmpty: true,
-    isInt: true,
     customSanitizer: {
       options: (value) => parseInt(value),
     },
@@ -27,7 +32,6 @@ const bookListQuery: Schema = {
   pageSize: {
     in: ["query"],
     notEmpty: true,
-    isInt: true,
     customSanitizer: {
       options: (value) => (parseInt(value) > 25 ? 25 : parseInt(value)),
     },

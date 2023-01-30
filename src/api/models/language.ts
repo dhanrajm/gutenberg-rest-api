@@ -1,8 +1,5 @@
-import debug from "debug";
-import DB, { Model } from "../../db";
+import { Model } from "../../db";
 import BookModel from "./book";
-
-const log = debug("api:models:language");
 
 export default class LanguageModel extends Model {
   static get tableName() {
@@ -25,9 +22,5 @@ export default class LanguageModel extends Model {
         },
       },
     };
-  }
-
-  getMany() {
-    log("called", DB);
   }
 }

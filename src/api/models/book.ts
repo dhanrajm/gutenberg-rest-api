@@ -1,5 +1,5 @@
-import debug from "debug";
-import DB, { Model } from "../../db";
+import { Model } from "../../db";
+import logger from "../../helpers/logger";
 import {
   Author,
   Book,
@@ -16,7 +16,7 @@ import FormatModel from "./format";
 import LanguageModel from "./language";
 import SubjectModel from "./subject";
 
-const log = debug("api:models:books");
+const log = logger("api:models:books");
 
 export default class BookModel extends Model {
   authors: any;
@@ -90,6 +90,11 @@ export default class BookModel extends Model {
     };
   }
 
+  /**
+   * Format the result record from the database to model
+   * @param record {any}
+   * @returns {Book}
+   */
   static format(record: any): Book {
     const book = {
       id: record.id,
@@ -141,8 +146,17 @@ export default class BookModel extends Model {
 
     return book;
   }
+
+  /**
+   * This is used to query the the database with supplies params.
+   * Promise in the result will resolve to object with books array and pageInfo object
+   * @param params {DbBookQueryParams}
+   * @returns {Promise}
+   */
   async getMany(params: DbBookQueryParams): Promise<BookConnection | null> {
-    console.log(`getMany: called ${JSON.stringify(params)}`);
+    const logFn = log.extend("getMany");
+
+    logFn("called %O", JSON.stringify(params));
     const nameFilter = (
       builder: any,
       _type: string,
@@ -160,9 +174,7 @@ export default class BookModel extends Model {
       }
     };
 
-    log("called", DB, params);
     let query = BookModel.query();
-
     query
       .select(
         BookModel.raw(`
@@ -282,16 +294,21 @@ export default class BookModel extends Model {
       .whereRaw(`"books_book"."id" in (SELECT "id" FROM "filtered_books")`);
 
     const result = await query;
-    console.log(JSON.stringify(result));
-    console.log(query.toKnexQuery().toQuery());
+    logFn("result %O", JSON.stringify(result));
+    logFn("SQL query %O", query.toKnexQuery().toQuery());
 
     const totalCount = result[0] ? result[0].totalCount : 0;
-    console.log("totalCount", totalCount);
+    logFn("totalCount=%O", totalCount);
+
     const books: Book[] = [];
     const pageInfo = {
       totalCount,
     };
+
+    // format the results
     result.forEach((record) => books.push(BookModel.format(record)));
+
+    logFn('done')
     return { books, pageInfo };
   }
 }

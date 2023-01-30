@@ -1,8 +1,5 @@
-import debug from "debug";
-import DB, { Model } from "../../db";
+import { Model } from "../../db";
 import BookModel from "./book";
-
-const log = debug("api:models:format");
 
 export default class FormatModel extends Model {
   static get tableName() {
@@ -20,9 +17,5 @@ export default class FormatModel extends Model {
         },
       },
     };
-  }
-
-  getMany() {
-    log("called", DB);
   }
 }

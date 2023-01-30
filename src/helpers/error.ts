@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
-// import config from "../config";
+import config from "../config";
+import logger from "./logger";
+
+const log = logger("helpers:error");
 
 /**
  * Intercept unhandled promise rejection and thow the same exception
@@ -49,31 +52,44 @@ class APIError extends Error {
   }
 }
 
-function errorFormatter(
-  err: any,
-  _req: Request,
-  _res: Response,
-  next: NextFunction
-) {
-  console.log("errorFormatter", err.constructor.name);
-  // if (err) {
-  //   // validation error contains errors which is an array of error each containing message[]
-  //   const unifiedErrorMessage = err.details.body
-  //     .map((error: { message: string }) => error.message)
-  //     .join(" and ");
-  //   const error = new APIError(unifiedErrorMessage, err.statusCode, true);
-  //   return next(error);
-  // }
+/**
+ * Format the error and send the response back
+ * @param err {any}
+ * @param res {Response}
+ */
+function sendError(err: any, res: Response) {
+  let code = null as string | null;
+  let stack = null as string | null;
+  let message = "something went wrong";
+  let status = null;
+  let isPublic = false;
 
-  // if (!(err instanceof APIError)) {
-  //   const apiError = new APIError(err.message, err.status, err.isPublic);
-  //   return next(apiError);
-  // }
+  if (err instanceof APIError) {
+    status = typeof err.status === "number" ? err.status : parseInt(err.status);
+    stack = err.stack || null;
+    message = err.message;
+    isPublic = err.isPublic;
+  } else if (err instanceof Error) {
+    code = "500";
+    stack = err.stack || null;
+    message = err.message;
+  }
+  status = status || 500;
 
-  return next(err);
+  let response: object = { message };
+  if (
+    config.server.env === "development" ||
+    config.server.env === "staging" ||
+    isPublic
+  ) {
+    response = { ...response, code, stack };
+  }
+
+  return res.status(status).send(response);
 }
 
-function notFoundHandler(_req: Request, _res: Response, next: NextFunction) {
+function notFoundHandler(req: Request, _res: Response, next: NextFunction) {
+  log.extend("notFoundHandler")("%O", req.url);
   const err = new APIError("API not found", httpStatus.NOT_FOUND);
   return next(err);
 }
@@ -84,11 +100,6 @@ function errorHandler(
   res: Response,
   _next: NextFunction
 ) {
-  console.log(err);
-  res.send("error");
-  // res.status(err.status).json({
-  //   message: err.isPublic ? err.message : httpStatus[err.status],
-  //   stack: config.server.env === "development" ? err.stack : {},
-  // });
+  return sendError(err, res);
 }
-export { APIError, notFoundHandler, errorFormatter, errorHandler };
+export { APIError, notFoundHandler, sendError, errorHandler };
