@@ -9,6 +9,7 @@ REST API for fetching books from Project Gutenberg Data.
 - create `.env` file at root folder with following values
 
 ```
+DEBUG=gutenberg-rest-api:*
 SERVER_PORT=5000
 SERVER_NAME=gutenberg-rest-api
 SERVER_ENV=development
